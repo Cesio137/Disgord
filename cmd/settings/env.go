@@ -13,11 +13,13 @@ type EnvConfig struct {
 	WebhookLogsURL string `validate:"omitempty,url"`
 }
 
-func ValidateSchema() EnvConfig {
+var EnvSchema EnvConfig
+
+func init() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error trying to load .env file")
-		return EnvConfig{}
+		log.Fatal("❌ Error trying to load .env file")
+		return
 	}
 	
 	config := EnvConfig{
@@ -28,12 +30,11 @@ func ValidateSchema() EnvConfig {
 	err = validate.Struct(config)
 	if err != nil {
 		for _, err := range err.(validator.ValidationErrors) {
-			fmt.Printf("Error on field '%s': %s\n", err.Field(), err.ActualTag())
+			fmt.Printf("❌ Error on field '%s': %s\n", err.Field(), err.ActualTag())
 		}
 		os.Exit(1)
-		return EnvConfig{}
+		return
 	}
-	return config
+	EnvSchema = config
+	fmt.Println("✔ Env vars loaded successfully!")
 }
-
-var EnvSchema EnvConfig = ValidateSchema()
