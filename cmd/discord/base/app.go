@@ -35,8 +35,6 @@ func AppBootstrap(token string, intents discordgo.Intent) *App {
 		return &App{}
 	}
 	
-	defer sess.Close()
-
 	RegisterCommands(sess)
 
 	fmt.Println("➝ Online as", sess.State.User.Username)

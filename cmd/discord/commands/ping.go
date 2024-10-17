@@ -14,19 +14,18 @@ func init() {
 			Name:        "ping",
 			Description: "Replies with pong 🏓",
 		},
-		Run: teste,
-	}
-}
-
-func teste(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	fmt.Println("Comando ping")
+		Run: func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+			fmt.Println("Command ping")
 			err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 				Type: discordgo.InteractionResponseChannelMessageWithSource,
 				Data: &discordgo.InteractionResponseData{
 					Content: "Pong!",
+					Flags: discordgo.MessageFlagsEphemeral,
 				},
 			})
 			if err != nil {
-				fmt.Println("Erro ao responder ao comando:", err)
+				fmt.Println("Error trying to respond the ping command:", err)
 			}
+		},
+	}
 }

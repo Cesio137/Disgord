@@ -10,8 +10,9 @@ import (
 )
 
 func main() {
-	_ = base.AppBootstrap(settings.EnvSchema.BotToken, 0)
+	client := base.AppBootstrap(settings.EnvSchema.BotToken, 0)
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
 	<-sc
+	defer client.Sess.Close()
 }
