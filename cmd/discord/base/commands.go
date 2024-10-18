@@ -1,44 +1,29 @@
 package base
 
 import (
-	"fmt"
+	"disgord/cmd/discord/commands"
+	"log"
 
 	"github.com/bwmarrin/discordgo"
 )
 
-type SlashCommand struct {
-	Command discordgo.ApplicationCommand
-	Run func(s *discordgo.Session, i *discordgo.InteractionCreate)
-}
-
-var Commands map[string]SlashCommand = make(map[string]SlashCommand)
-
 func RegisterCommands(s *discordgo.Session) {
-	fmt.Println("Refreshing commands!")
-	appID := s.State.User.ID
-    commands, err := s.ApplicationCommands(appID, "1253804989487386624")
+	log.Println("Refreshing commands!")
+    appcmd, err := s.ApplicationCommands(s.State.User.ID, "")
     if err == nil {
-        for _, cmd := range commands {
-			s.ApplicationCommandDelete(appID, "", cmd.ID)
+        for _, cmd := range appcmd {
+			s.ApplicationCommandDelete(s.State.User.ID, "", cmd.ID)
 		}
     }
 
-	for _, slash_cmd := range Commands {
+	for _, slash_cmd := range commands.SlashCommands {
 		cmd := slash_cmd.Command
-		_, err := s.ApplicationCommandCreate(s.State.User.ID, "1253804989487386624", &cmd)
+		_, err := s.ApplicationCommandCreate(s.State.User.ID, "", &cmd)
 
 		if err == nil {
-			fmt.Printf("{/} %s command loaded!\n", cmd.Name)
+			log.Printf("{/} %s command loaded!\n", cmd.Name)
 		} else {
-			fmt.Printf("❌  cannot load %s command!\n", cmd.Name)
-			fmt.Println(err.Error())
+			log.Printf("❌ cannot load %s command!\n %s\n", cmd.Name, err.Error())
 		}
 	}
-}
-
-func HandleCommands(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	if i.Type != discordgo.InteractionApplicationCommand {
-		return 
-	}
-	Commands[i.ApplicationCommandData().Name].Run(s, i)
 }

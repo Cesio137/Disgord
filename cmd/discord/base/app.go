@@ -1,9 +1,9 @@
 package base
 
 import (
-	"fmt"
-	"github.com/bwmarrin/discordgo"
 	"log"
+
+	"github.com/bwmarrin/discordgo"
 )
 
 type App struct {
@@ -15,12 +15,9 @@ func AppBootstrap(token string, intents discordgo.Intent) *App {
 	sess, err := discordgo.New("Bot " + token)
 
 	if err != nil {
-		fmt.Println("❌ Error trying to create a client.")
-		log.Fatal(err.Error())
+		log.Fatal("❌ Error trying to create a client.\n", err.Error())
 		return &App{}
 	}
-
-	sess.AddHandler(HandleCommands)
 
 	if intents == 0 {
 		sess.Identify.Intents = discordgo.IntentsAllWithoutPrivileged
@@ -28,16 +25,17 @@ func AppBootstrap(token string, intents discordgo.Intent) *App {
 		sess.Identify.Intents = intents
 	}
 
+	RegisterEvents(sess)
+
 	err = sess.Open()
 	if err != nil {
-		fmt.Println("❌ Error trying to create a open session.")
-		log.Fatal(err.Error())
+		log.Fatal("❌ Error trying to open session.\n", err.Error())
 		return &App{}
 	}
-	
+
 	RegisterCommands(sess)
 
-	fmt.Println("➝ Online as", sess.State.User.Username)
+	log.Println("➝ Online as", sess.State.User.Username)
 
 	return &App{
 		Sess: sess,

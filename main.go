@@ -2,7 +2,6 @@ package main
 
 import (
 	"disgord/cmd/discord/base"
-	_ "disgord/cmd/discord/commands"
 	"disgord/cmd/settings"
 	"os"
 	"os/signal"

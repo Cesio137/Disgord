@@ -1,7 +1,6 @@
 package settings
 
 import (
-	"fmt"
 	"github.com/go-playground/validator/v10"
 	"github.com/joho/godotenv"
 	"log"
@@ -30,11 +29,11 @@ func init() {
 	err = validate.Struct(config)
 	if err != nil {
 		for _, err := range err.(validator.ValidationErrors) {
-			fmt.Printf("❌ Error on field '%s': %s\n", err.Field(), err.ActualTag())
+			log.Printf("❌ Error on field '%s': %s\n", err.Field(), err.ActualTag())
 		}
 		os.Exit(1)
 		return
 	}
 	EnvSchema = config
-	fmt.Println("✔ Env vars loaded successfully!")
+	log.Println("✔ Env vars loaded successfully!")
 }
